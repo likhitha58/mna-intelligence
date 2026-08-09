@@ -2,16 +2,37 @@ from models.market import MarketFinding
 from state.schemas import AcquisitionState
 from utils.llm import get_llm
 from utils.news_data import get_company_news
+from utils.evidence_factory import create_evidence
 
 
 def market_node(state: AcquisitionState) -> AcquisitionState:
 
     news = get_company_news(state.company_b)
 
+    evidence_id = None
+
+    if news:
+
+        evidence = create_evidence(
+            source_name="Yahoo Finance",
+            source_type="news",
+            content=str(news),
+            relevance=(
+                f"Recent market and news information "
+                f"retrieved for {state.company_b}."
+            ),
+            credibility="medium",
+        )
+
+        state.evidence.append(evidence)
+
+        evidence_id = evidence.evidence_id
+
     llm = get_llm()
 
     structured_llm = llm.with_structured_output(
-        MarketFinding
+        MarketFinding,
+        method="json_schema"
     )
 
     prompt = f"""
@@ -41,10 +62,14 @@ Rules:
 4. Explain how it could affect the acquisition.
 5. Consider whether the signal is positive, negative, or neutral.
 6. Do not treat rumors as confirmed facts.
-7. Produce one important market finding.
+7. If no useful news is available, explicitly state that.
+8. Produce one important market finding.
 """
 
     finding = structured_llm.invoke(prompt)
+
+    if evidence_id:
+        finding.evidence_ids = [evidence_id]
 
     state.market_findings.append(finding)
 
