@@ -1,6 +1,7 @@
-from typing import Any
-
 from pydantic import BaseModel, Field
+
+from models.evidence import Evidence
+from models.financial import FinancialFinding
 
 
 class AcquisitionState(BaseModel):
@@ -13,7 +14,9 @@ class AcquisitionState(BaseModel):
     research_tasks: list[Any] = Field(default_factory=list)
 
     # Agent findings
-    financial_findings: list[Any] = Field(default_factory=list)
+    financial_findings: list[FinancialFinding] = Field(
+    default_factory=list
+    )
     market_findings: list[Any] = Field(default_factory=list)
     competitor_findings: list[Any] = Field(default_factory=list)
     legal_findings: list[Any] = Field(default_factory=list)
@@ -24,7 +27,9 @@ class AcquisitionState(BaseModel):
     risks: list[Any] = Field(default_factory=list)
 
     # Evidence
-    evidence: list[Any] = Field(default_factory=list)
+    evidence: list[Evidence] = Field(
+    default_factory=list
+    )
 
     # Valuation
     valuation: Any = None
