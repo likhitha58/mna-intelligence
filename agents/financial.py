@@ -2,11 +2,40 @@ from models.financial import FinancialFinding
 from state.schemas import AcquisitionState
 from utils.financial_data import get_company_financials
 from utils.llm import get_llm
+from utils.evidence_factory import create_evidence
 
 
 def financial_node(state: AcquisitionState) -> AcquisitionState:
 
-    financial_data = get_company_financials(state.company_b)
+    financial_data = get_company_financials(
+        state.company_b
+    )
+
+    has_financial_data = any(
+        value is not None
+        for key, value in financial_data.items()
+        if key not in {"company_name", "ticker"}
+    )
+
+    if has_financial_data:
+
+        evidence = create_evidence(
+            source_name="Yahoo Finance",
+            source_type="market_data",
+            content=str(financial_data),
+            relevance=(
+                f"Financial information retrieved for "
+                f"{state.company_b}."
+            ),
+            credibility="medium",
+        )
+
+        state.evidence.append(evidence)
+
+        evidence_id = evidence.evidence_id
+
+    else:
+        evidence_id = None
 
     llm = get_llm()
 
@@ -42,6 +71,9 @@ Rules:
 """
 
     finding = structured_llm.invoke(prompt)
+
+    if evidence_id:
+        finding.evidence_ids = [evidence_id]
 
     state.financial_findings.append(finding)
 
