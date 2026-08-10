@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from models.evidence import Evidence
 from models.financial import FinancialFinding
 from models.market import MarketFinding
+from models.competitive import CompetitiveFinding
 
 class AcquisitionState(BaseModel):
     # Acquisition context
@@ -26,7 +27,7 @@ class AcquisitionState(BaseModel):
     add
     ] = Field(default_factory=list)
     competitor_findings: Annotated[
-    list[Any],
+    list[CompetitiveFinding],
     add
     ] = Field(default_factory=list)
     legal_findings: Annotated[

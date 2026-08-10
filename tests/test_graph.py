@@ -35,6 +35,12 @@ def test_market_graph():
     assert result["research_tasks"]
     assert result["financial_findings"]
     assert result["market_findings"]
+    
+    print("\nCOMPETITIVE FINDINGS\n")
+
+    for finding in result["competitor_findings"]:
+        print(finding)
+    assert result["competitor_findings"]
 
 
 if __name__ == "__main__":
