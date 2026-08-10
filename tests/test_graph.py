@@ -41,6 +41,12 @@ def test_market_graph():
     for finding in result["competitor_findings"]:
         print(finding)
     assert result["competitor_findings"]
+    
+    print("\nLEGAL FINDINGS\n")
+
+    for finding in result["legal_findings"]:
+        print(finding)
+    assert result["legal_findings"]
 
 
 if __name__ == "__main__":

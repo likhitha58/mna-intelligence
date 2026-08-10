@@ -5,6 +5,7 @@ from agents.planner import planner_node
 from agents.market import market_node
 from state.schemas import AcquisitionState
 from agents.competitive import competitive_node
+from agents.legal import legal_node
 
 def aggregator_node(state):
     return {}
@@ -21,6 +22,10 @@ def build_graph():
     "competitive",
     competitive_node
     )
+    graph.add_node(
+    "legal",
+    legal_node
+    )
     graph.add_edge(START, "planner")
 
     graph.add_edge("planner", "financial")
@@ -34,6 +39,14 @@ def build_graph():
     )
     graph.add_edge(
     "competitive",
+    "aggregator"
+    )
+    graph.add_edge(
+    "planner",
+    "legal"
+    )
+    graph.add_edge(
+    "legal",
     "aggregator"
     )
     graph.add_edge("aggregator", END)
