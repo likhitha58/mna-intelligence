@@ -5,18 +5,26 @@ from agents.planner import planner_node
 from agents.market import market_node
 from state.schemas import AcquisitionState
 
+def aggregator_node(state):
+    return state
 
 def build_graph():
 
-    builder = StateGraph(AcquisitionState)
+    graph = StateGraph(AcquisitionState)
 
-    builder.add_node("planner", planner_node)
-    builder.add_node("financial", financial_node)
-    builder.add_node("market", market_node)
-    
-    builder.add_edge(START, "planner")
-    builder.add_edge("planner", "financial")
-    builder.add_edge("financial", "market")
-    builder.add_edge("market", END)
+    graph.add_node("planner", planner_node)
+    graph.add_node("financial", financial_node)
+    graph.add_node("market", market_node)
+    graph.add_node("aggregator", aggregator_node)
 
-    return builder.compile()
+    graph.add_edge(START, "planner")
+
+    graph.add_edge("planner", "financial")
+    graph.add_edge("planner", "market")
+
+    graph.add_edge("financial", "aggregator")
+    graph.add_edge("market", "aggregator")
+
+    graph.add_edge("aggregator", END)
+
+    return graph.compile()

@@ -1,4 +1,5 @@
-from typing import Any
+from typing import Annotated, Any
+from operator import add
 
 from pydantic import BaseModel, Field
 
@@ -16,22 +17,33 @@ class AcquisitionState(BaseModel):
     research_tasks: list[Any] = Field(default_factory=list)
 
     # Agent findings
-    financial_findings: list[FinancialFinding] = Field(
-    default_factory=list
-    )
-    market_findings: list[MarketFinding] = Field(
-    default_factory=list
-    )
-    competitor_findings: list[Any] = Field(default_factory=list)
-    legal_findings: list[Any] = Field(default_factory=list)
-    regulatory_findings: list[Any] = Field(default_factory=list)
+    financial_findings: Annotated[
+    list[FinancialFinding],
+    add
+    ] = Field(default_factory=list)
+    market_findings: Annotated[
+    list[MarketFinding],
+    add
+    ] = Field(default_factory=list)
+    competitor_findings: Annotated[
+    list[Any],
+    add
+    ] = Field(default_factory=list)
+    legal_findings: Annotated[
+    list[Any],
+    add
+    ] = Field(default_factory=list)
+    regulatory_findings: Annotated[
+    list[Any],
+    add
+    ] = Field(default_factory=list)
 
     # Cross-functional analysis
     synergies: list[Any] = Field(default_factory=list)
     risks: list[Any] = Field(default_factory=list)
 
     # Evidence
-    evidence: list[Evidence] = Field(
+    evidence: Annotated[list[Evidence], add] = Field(
     default_factory=list
     )
 

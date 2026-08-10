@@ -14,15 +14,15 @@ def test_market_agent():
 
     print("\nMARKET FINDINGS\n")
 
-    for finding in result.market_findings:
+    for finding in result["market_findings"]:
         print(finding)
 
     print("\nEVIDENCE\n")
 
-    for evidence in result.evidence:
+    for evidence in result["evidence"]:
         print(evidence)
 
-    assert result.market_findings
+    assert result["market_findings"]
 
 
 if __name__ == "__main__":

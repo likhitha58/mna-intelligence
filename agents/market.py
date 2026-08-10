@@ -5,10 +5,11 @@ from utils.news_data import get_company_news
 from utils.evidence_factory import create_evidence
 
 
-def market_node(state: AcquisitionState) -> AcquisitionState:
+def market_node(state: AcquisitionState):
 
     news = get_company_news(state.company_b)
 
+    evidence_items = []
     evidence_id = None
 
     if news:
@@ -24,8 +25,7 @@ def market_node(state: AcquisitionState) -> AcquisitionState:
             credibility="medium",
         )
 
-        state.evidence.append(evidence)
-
+        evidence_items.append(evidence)
         evidence_id = evidence.evidence_id
 
     llm = get_llm()
@@ -71,6 +71,7 @@ Rules:
     if evidence_id:
         finding.evidence_ids = [evidence_id]
 
-    state.market_findings.append(finding)
-
-    return state
+    return {
+        "market_findings": [finding],
+        "evidence": evidence_items,
+    }

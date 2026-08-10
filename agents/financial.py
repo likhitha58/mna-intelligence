@@ -5,11 +5,14 @@ from utils.llm import get_llm
 from utils.evidence_factory import create_evidence
 
 
-def financial_node(state: AcquisitionState) -> AcquisitionState:
+def financial_node(state: AcquisitionState):
 
     financial_data = get_company_financials(
         state.company_b
     )
+
+    evidence_items = []
+    evidence_id = None
 
     has_financial_data = any(
         value is not None
@@ -30,17 +33,14 @@ def financial_node(state: AcquisitionState) -> AcquisitionState:
             credibility="medium",
         )
 
-        state.evidence.append(evidence)
-
+        evidence_items.append(evidence)
         evidence_id = evidence.evidence_id
-
-    else:
-        evidence_id = None
 
     llm = get_llm()
 
     structured_llm = llm.with_structured_output(
-        FinancialFinding
+        FinancialFinding,
+        method="json_schema"
     )
 
     prompt = f"""
@@ -75,6 +75,7 @@ Rules:
     if evidence_id:
         finding.evidence_ids = [evidence_id]
 
-    state.financial_findings.append(finding)
-
-    return state
+    return {
+        "financial_findings": [finding],
+        "evidence": evidence_items,
+    }
