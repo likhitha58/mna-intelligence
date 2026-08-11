@@ -12,8 +12,11 @@ from models.risk import RiskFinding
 from models.valuation import ValuationFinding
 from models.integration import IntegrationFinding
 from models.stakeholder import StakeholderFinding
+from models.recommendation import FinalRecommendation
+
 
 class AcquisitionState(BaseModel):
+
     # Acquisition context
     company_a: str
     company_b: str
@@ -24,45 +27,53 @@ class AcquisitionState(BaseModel):
 
     # Agent findings
     financial_findings: Annotated[
-    list[FinancialFinding],
-    add
+        list[FinancialFinding],
+        add
     ] = Field(default_factory=list)
+
     market_findings: Annotated[
-    list[MarketFinding],
-    add
+        list[MarketFinding],
+        add
     ] = Field(default_factory=list)
+
     competitor_findings: Annotated[
-    list[CompetitiveFinding],
-    add
+        list[CompetitiveFinding],
+        add
     ] = Field(default_factory=list)
+
     integration_findings: Annotated[
-    list[IntegrationFinding],
-    add
+        list[IntegrationFinding],
+        add
     ] = Field(default_factory=list)
+
     legal_findings: Annotated[
-    list[LegalFinding],
-    add
+        list[LegalFinding],
+        add
     ] = Field(default_factory=list)
+
     regulatory_findings: Annotated[
-    list[Any],
-    add
+        list[Any],
+        add
     ] = Field(default_factory=list)
+
     stakeholder_findings: Annotated[
-    list[StakeholderFinding],
-    add
+        list[StakeholderFinding],
+        add
     ] = Field(default_factory=list)
 
     # Cross-functional analysis
     synergies: list[Any] = Field(default_factory=list)
+
     risks: Annotated[
-    list[RiskFinding],
-    add
+        list[RiskFinding],
+        add
     ] = Field(default_factory=list)
 
     # Evidence
-    evidence: Annotated[list[Evidence], add] = Field(
-    default_factory=list
-    )
+    evidence: Annotated[
+        list[Evidence],
+        add
+    ] = Field(default_factory=list)
 
     # Valuation
     valuation: ValuationFinding | None = None
@@ -71,4 +82,4 @@ class AcquisitionState(BaseModel):
     critic_feedback: list[Any] = Field(default_factory=list)
 
     # Final decision
-    final_recommendation: Any = None
+    final_recommendation: FinalRecommendation | None = None

@@ -79,6 +79,13 @@ def test_market_graph():
         print(finding)
 
     assert result["stakeholder_findings"]
+    
+    print("\nFINAL RECOMMENDATION\n")
+    print("Checking final recommendation...")
+
+    final_recommendation = result.get("final_recommendation")
+    print("Final recommendation retrieved.")
+    print(final_recommendation)
 
 if __name__ == "__main__":
     test_market_graph()

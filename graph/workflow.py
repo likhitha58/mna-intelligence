@@ -11,8 +11,11 @@ from agents.risk import risk_node
 from agents.valuation import valuation_node
 from agents.integration import integration_node
 from agents.stakeholder import stakeholder_node
+from agents.decision import decision_node
 
 def aggregator_node(state):
+    print("\n>>> AGGREGATOR NODE STARTED")
+    print(">>> AGGREGATOR NODE COMPLETED")
     return {}
 
 def build_graph():
@@ -45,6 +48,7 @@ def build_graph():
     "stakeholder",
     stakeholder_node
     )
+    graph.add_node("decision", decision_node)
     graph.add_edge(START, "planner")
 
     graph.add_edge("planner", "financial")
@@ -103,6 +107,7 @@ def build_graph():
         "stakeholder",
         "aggregator"
     )
-    graph.add_edge("aggregator", END)
+    graph.add_edge("aggregator", "decision")
+    graph.add_edge("decision", END)
 
     return graph.compile()
