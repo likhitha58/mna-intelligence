@@ -15,17 +15,29 @@ from models.stakeholder import StakeholderFinding
 from models.recommendation import FinalRecommendation
 from models.critic import CriticFeedback
 
+
 class AcquisitionState(BaseModel):
 
-    # Acquisition context
+    # ==========================================
+    # ACQUISITION CONTEXT
+    # ==========================================
+
     company_a: str
     company_b: str
     user_question: str
 
-    # Research planning
-    research_tasks: list[Any] = Field(default_factory=list)
+    # ==========================================
+    # RESEARCH PLANNING
+    # ==========================================
 
-    # Agent findings
+    research_tasks: list[Any] = Field(
+        default_factory=list
+    )
+
+    # ==========================================
+    # AGENT FINDINGS
+    # ==========================================
+
     financial_findings: Annotated[
         list[FinancialFinding],
         add
@@ -41,11 +53,6 @@ class AcquisitionState(BaseModel):
         add
     ] = Field(default_factory=list)
 
-    integration_findings: Annotated[
-        list[IntegrationFinding],
-        add
-    ] = Field(default_factory=list)
-
     legal_findings: Annotated[
         list[LegalFinding],
         add
@@ -56,33 +63,57 @@ class AcquisitionState(BaseModel):
         add
     ] = Field(default_factory=list)
 
+    integration_findings: Annotated[
+        list[IntegrationFinding],
+        add
+    ] = Field(default_factory=list)
+
     stakeholder_findings: Annotated[
         list[StakeholderFinding],
         add
     ] = Field(default_factory=list)
 
-    # Cross-functional analysis
-    synergies: list[Any] = Field(default_factory=list)
+    # ==========================================
+    # CROSS-FUNCTIONAL ANALYSIS
+    # ==========================================
+
+    synergies: list[Any] = Field(
+        default_factory=list
+    )
 
     risks: Annotated[
         list[RiskFinding],
         add
     ] = Field(default_factory=list)
 
-    # Evidence
+    # ==========================================
+    # EVIDENCE
+    # ==========================================
+
     evidence: Annotated[
         list[Evidence],
         add
     ] = Field(default_factory=list)
 
-    # Valuation
+    # ==========================================
+    # VALUATION
+    # ==========================================
+
     valuation: ValuationFinding | None = None
 
-    # Critic
+    # ==========================================
+    # CRITIC
+    # ==========================================
+
     critic_feedback: Annotated[
-    list[CriticFeedback],
-    add
+        list[CriticFeedback],
+        add
     ] = Field(default_factory=list)
 
-    # Final decision
+    revision_count: int = 0
+
+    # ==========================================
+    # FINAL DECISION
+    # ==========================================
+
     final_recommendation: FinalRecommendation | None = None

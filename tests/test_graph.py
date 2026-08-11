@@ -12,7 +12,13 @@ def test_market_graph():
         user_question="Should Microsoft acquire OpenAI?"
     )
 
+    print("\nRunning full M&A workflow...\n")
+
     result = graph.invoke(initial_state)
+
+    # ==================================================
+    # Research Tasks
+    # ==================================================
 
     print("\nRESEARCH TASKS\n")
 
@@ -22,80 +28,158 @@ def test_market_graph():
             f"{task.objective}"
         )
 
+    assert result["research_tasks"]
+
+    # ==================================================
+    # Financial
+    # ==================================================
+
     print("\nFINANCIAL FINDINGS\n")
 
     for finding in result["financial_findings"]:
         print(finding)
+
+    assert result["financial_findings"]
+
+    # ==================================================
+    # Market
+    # ==================================================
 
     print("\nMARKET FINDINGS\n")
 
     for finding in result["market_findings"]:
         print(finding)
 
-    assert result["research_tasks"]
-    assert result["financial_findings"]
     assert result["market_findings"]
-    
+
+    # ==================================================
+    # Competitive
+    # ==================================================
+
     print("\nCOMPETITIVE FINDINGS\n")
 
     for finding in result["competitor_findings"]:
         print(finding)
+
     assert result["competitor_findings"]
-    
+
+    # ==================================================
+    # Legal
+    # ==================================================
+
     print("\nLEGAL FINDINGS\n")
 
     for finding in result["legal_findings"]:
         print(finding)
+
     assert result["legal_findings"]
-    
+
+    # ==================================================
+    # Regulatory
+    # ==================================================
+
     print("\nREGULATORY FINDINGS\n")
 
     for finding in result["regulatory_findings"]:
         print(finding)
 
     assert result["regulatory_findings"]
-    
+
+    # ==================================================
+    # Risk
+    # ==================================================
+
     print("\nRISK FINDINGS\n")
 
     for finding in result["risks"]:
         print(finding)
-        assert result["risks"]
-        
+
+    assert result["risks"]
+
+    # ==================================================
+    # Valuation
+    # ==================================================
+
     print("\nVALUATION\n")
 
     print(result["valuation"])
 
     assert result["valuation"]
+
+    # ==================================================
+    # Integration
+    # ==================================================
+
     print("\nINTEGRATION FINDINGS\n")
 
     for finding in result["integration_findings"]:
         print(finding)
 
     assert result["integration_findings"]
-    
+
+    # ==================================================
+    # Stakeholders
+    # ==================================================
+
     print("\nSTAKEHOLDER FINDINGS\n")
 
     for finding in result["stakeholder_findings"]:
         print(finding)
 
     assert result["stakeholder_findings"]
-    
-    print("\nFINAL RECOMMENDATION\n")
-    print("Checking final recommendation...")
 
-    final_recommendation = result.get("final_recommendation")
-    print("Final recommendation retrieved.")
+    # ==================================================
+    # Final Recommendation
+    # ==================================================
+
+    print("\nFINAL RECOMMENDATION\n")
+
+    final_recommendation = result.get(
+        "final_recommendation"
+    )
+
     print(final_recommendation)
+
+    assert final_recommendation
+
+    # ==================================================
+    # Critic
+    # ==================================================
+
     print("\nCRITIC FEEDBACK\n")
 
-    critic_feedback = result.get("critic_feedback")
+    critic_feedback = result.get(
+        "critic_feedback"
+    )
 
     print(critic_feedback)
 
     assert critic_feedback
     assert len(critic_feedback) > 0
-    assert isinstance(critic_feedback[0].approved, bool)
 
-    print("\nFull M&A graph with Critic passed!")
+    assert isinstance(
+        critic_feedback[0].approved,
+        bool
+    )
+
+    # ==================================================
+    # Revision Count
+    # ==================================================
+
+    print("\nREVISION COUNT\n")
+
+    print(
+        result.get(
+            "revision_count",
+            0
+        )
+    )
+
+    print(
+        "\nFull M&A graph with "
+        "Decision + Critic passed!"
+    )
+
+
 if __name__ == "__main__":
     test_market_graph()

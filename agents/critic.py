@@ -5,6 +5,8 @@ from utils.llm import get_llm
 
 def critic_node(state: AcquisitionState):
 
+    print("\n>>> CRITIC NODE STARTED")
+
     llm = get_llm()
 
     recommendation = state.final_recommendation
@@ -35,40 +37,41 @@ Target Company:
 User Question:
 {state.user_question}
 
-Final Recommendation:
+FINAL RECOMMENDATION:
 {recommendation}
 
-Financial Findings:
+FINANCIAL FINDINGS:
 {state.financial_findings}
 
-Market Findings:
+MARKET FINDINGS:
 {state.market_findings}
 
-Competitive Findings:
+COMPETITIVE FINDINGS:
 {state.competitor_findings}
 
-Legal Findings:
+LEGAL FINDINGS:
 {state.legal_findings}
 
-Regulatory Findings:
+REGULATORY FINDINGS:
 {state.regulatory_findings}
 
-Risk Findings:
+RISK FINDINGS:
 {state.risks}
 
-Valuation:
+VALUATION:
 {state.valuation}
 
-Integration Findings:
+INTEGRATION FINDINGS:
 {state.integration_findings}
 
-Stakeholder Findings:
+STAKEHOLDER FINDINGS:
 {state.stakeholder_findings}
 
-Evidence:
+EVIDENCE:
 {state.evidence}
 
-Evaluate the recommendation using the following criteria:
+
+CRITIC EVALUATION CRITERIA:
 
 1. Is the recommendation supported by the findings?
 
@@ -95,30 +98,80 @@ Evaluate the recommendation using the following criteria:
 10. Is the confidence level justified by the quality
     and completeness of the evidence?
 
-11. Identify any important contradictions.
+11. Identify important contradictions.
 
-12. Identify any important missing analysis.
+12. Identify important missing analysis.
 
-If the recommendation is sufficiently supported,
-set approved to True.
 
-If important problems exist that require the
-Decision Agent to reconsider the recommendation,
-set approved to False.
+APPROVAL RULE:
 
-Do not reject a recommendation merely because
-information is unavailable. Instead, determine
-whether the recommendation appropriately acknowledges
-that uncertainty.
+Set approved = true when the recommendation is
+sufficiently supported by the available evidence.
 
-Return a structured CriticFeedback object.
+Set approved = false only when there are important
+problems that require the Decision Agent to reconsider
+the recommendation.
+
+Do NOT reject a recommendation merely because some
+information is unavailable.
+
+Instead, check whether the recommendation correctly
+acknowledges that uncertainty.
+
+
+LIST FIELD RULES:
+
+major_issues MUST be a list.
+
+missing_analysis MUST be a list.
+
+evidence_issues MUST be a list.
+
+recommended_changes MUST be a list.
+
+If there are no items, return an empty list [].
+
+NEVER return null.
+
+Do not create any fields other than the fields
+defined by the CriticFeedback schema.
+
+The response must contain ONLY these fields:
+
+approved
+overall_assessment
+major_issues
+missing_analysis
+evidence_issues
+recommended_changes
+confidence_assessment
+
+Return ONLY valid JSON matching the CriticFeedback schema.
+
+The JSON object must contain exactly these fields:
+approved
+overall_assessment
+major_issues
+missing_analysis
+evidence_issues
+recommended_changes
+confidence_assessment
+
+All list fields must be JSON arrays.
+If there are no items, use [].
+Never use null.
 """
 
     structured_llm = llm.with_structured_output(
-        CriticFeedback
+        CriticFeedback,
+        method="json_mode"
     )
 
+    print(">>> CRITIC LLM CALL STARTING")
+
     feedback = structured_llm.invoke(prompt)
+
+    print(">>> CRITIC LLM CALL COMPLETED")
 
     return {
         "critic_feedback": [feedback]
