@@ -47,6 +47,19 @@ def test_market_graph():
     for finding in result["legal_findings"]:
         print(finding)
     assert result["legal_findings"]
+    
+    print("\nREGULATORY FINDINGS\n")
+
+    for finding in result["regulatory_findings"]:
+        print(finding)
+
+    assert result["regulatory_findings"]
+    
+    print("\nRISK FINDINGS\n")
+
+    for finding in result["risks"]:
+        print(finding)
+        assert result["risks"]
 
 
 if __name__ == "__main__":

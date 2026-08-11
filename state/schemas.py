@@ -8,6 +8,7 @@ from models.financial import FinancialFinding
 from models.market import MarketFinding
 from models.competitive import CompetitiveFinding
 from models.legal import LegalFinding
+from models.risk import RiskFinding
 
 class AcquisitionState(BaseModel):
     # Acquisition context
@@ -43,7 +44,10 @@ class AcquisitionState(BaseModel):
 
     # Cross-functional analysis
     synergies: list[Any] = Field(default_factory=list)
-    risks: list[Any] = Field(default_factory=list)
+    risks: Annotated[
+    list[RiskFinding],
+    add
+    ] = Field(default_factory=list)
 
     # Evidence
     evidence: Annotated[list[Evidence], add] = Field(
