@@ -86,6 +86,16 @@ def test_market_graph():
     final_recommendation = result.get("final_recommendation")
     print("Final recommendation retrieved.")
     print(final_recommendation)
+    print("\nCRITIC FEEDBACK\n")
 
+    critic_feedback = result.get("critic_feedback")
+
+    print(critic_feedback)
+
+    assert critic_feedback
+    assert len(critic_feedback) > 0
+    assert isinstance(critic_feedback[0].approved, bool)
+
+    print("\nFull M&A graph with Critic passed!")
 if __name__ == "__main__":
     test_market_graph()

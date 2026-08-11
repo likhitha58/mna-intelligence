@@ -4,7 +4,6 @@ from utils.llm import get_llm
 
 
 def decision_node(state: AcquisitionState):
-    print("\n>>> DECISION NODE STARTED")
     llm = get_llm()
 
     decision_context = {
@@ -156,9 +155,7 @@ Return a structured FinalRecommendation object.
     structured_llm = llm.with_structured_output(
         FinalRecommendation
     )
-    print(">>> DECISION LLM CALL STARTING")
     recommendation = structured_llm.invoke(prompt)
-    print(">>> DECISION LLM CALL COMPLETED")
     return {
         "final_recommendation": recommendation
     }

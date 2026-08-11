@@ -13,7 +13,7 @@ from models.valuation import ValuationFinding
 from models.integration import IntegrationFinding
 from models.stakeholder import StakeholderFinding
 from models.recommendation import FinalRecommendation
-
+from models.critic import CriticFeedback
 
 class AcquisitionState(BaseModel):
 
@@ -79,7 +79,10 @@ class AcquisitionState(BaseModel):
     valuation: ValuationFinding | None = None
 
     # Critic
-    critic_feedback: list[Any] = Field(default_factory=list)
+    critic_feedback: Annotated[
+    list[CriticFeedback],
+    add
+    ] = Field(default_factory=list)
 
     # Final decision
     final_recommendation: FinalRecommendation | None = None
