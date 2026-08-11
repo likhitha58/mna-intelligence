@@ -8,6 +8,9 @@ from agents.competitive import competitive_node
 from agents.legal import legal_node
 from agents.regulatory import regulatory_node
 from agents.risk import risk_node
+from agents.valuation import valuation_node
+from agents.integration import integration_node
+from agents.stakeholder import stakeholder_node
 
 def aggregator_node(state):
     return {}
@@ -33,7 +36,15 @@ def build_graph():
     "risk",
     risk_node
     )
-    
+    graph.add_node("valuation", valuation_node)
+    graph.add_node(
+    "integration",
+    integration_node
+    )
+    graph.add_node(
+    "stakeholder",
+    stakeholder_node
+    )
     graph.add_edge(START, "planner")
 
     graph.add_edge("planner", "financial")
@@ -72,6 +83,25 @@ def build_graph():
     graph.add_edge(
     "risk",
     "aggregator"
+    )
+    graph.add_edge("planner", "valuation")
+    graph.add_edge("valuation", "aggregator")
+    graph.add_edge(
+    "planner",
+    "integration"
+    )
+    graph.add_edge(
+    "integration",
+    "aggregator"
+    )
+    graph.add_edge(
+    "planner",
+    "stakeholder"
+    )
+
+    graph.add_edge(
+        "stakeholder",
+        "aggregator"
     )
     graph.add_edge("aggregator", END)
 

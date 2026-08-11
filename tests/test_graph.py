@@ -60,7 +60,25 @@ def test_market_graph():
     for finding in result["risks"]:
         print(finding)
         assert result["risks"]
+        
+    print("\nVALUATION\n")
 
+    print(result["valuation"])
+
+    assert result["valuation"]
+    print("\nINTEGRATION FINDINGS\n")
+
+    for finding in result["integration_findings"]:
+        print(finding)
+
+    assert result["integration_findings"]
+    
+    print("\nSTAKEHOLDER FINDINGS\n")
+
+    for finding in result["stakeholder_findings"]:
+        print(finding)
+
+    assert result["stakeholder_findings"]
 
 if __name__ == "__main__":
     test_market_graph()

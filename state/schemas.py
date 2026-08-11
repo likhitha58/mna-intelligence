@@ -9,6 +9,9 @@ from models.market import MarketFinding
 from models.competitive import CompetitiveFinding
 from models.legal import LegalFinding
 from models.risk import RiskFinding
+from models.valuation import ValuationFinding
+from models.integration import IntegrationFinding
+from models.stakeholder import StakeholderFinding
 
 class AcquisitionState(BaseModel):
     # Acquisition context
@@ -32,6 +35,10 @@ class AcquisitionState(BaseModel):
     list[CompetitiveFinding],
     add
     ] = Field(default_factory=list)
+    integration_findings: Annotated[
+    list[IntegrationFinding],
+    add
+    ] = Field(default_factory=list)
     legal_findings: Annotated[
     list[LegalFinding],
     add
@@ -40,7 +47,10 @@ class AcquisitionState(BaseModel):
     list[Any],
     add
     ] = Field(default_factory=list)
-    
+    stakeholder_findings: Annotated[
+    list[StakeholderFinding],
+    add
+    ] = Field(default_factory=list)
 
     # Cross-functional analysis
     synergies: list[Any] = Field(default_factory=list)
@@ -55,7 +65,7 @@ class AcquisitionState(BaseModel):
     )
 
     # Valuation
-    valuation: Any = None
+    valuation: ValuationFinding | None = None
 
     # Critic
     critic_feedback: list[Any] = Field(default_factory=list)
