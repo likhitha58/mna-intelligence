@@ -9,15 +9,16 @@ def critic_node(state: AcquisitionState):
 
     llm = get_llm()
 
-    recommendation = state.final_recommendation
+    recommendation = state.committee_decision
 
     prompt = f"""
 You are the Quality Control Critic Agent
 in an M&A Intelligence Platform.
 
 Your responsibility is to critically evaluate the
-final acquisition recommendation produced by the
-Decision Synthesis Agent.
+final acquisition recommendation approved by the
+Investment Committee Agent after reviewing the Decision
+Synthesis output.
 
 Do NOT perform new research.
 
@@ -40,35 +41,33 @@ User Question:
 FINAL RECOMMENDATION:
 {recommendation}
 
-FINANCIAL FINDINGS:
-{state.financial_findings}
+COMMITTEE DECISION:
 
-MARKET FINDINGS:
-{state.market_findings}
+{recommendation}
 
-COMPETITIVE FINDINGS:
-{state.competitor_findings}
 
-LEGAL FINDINGS:
-{state.legal_findings}
+KEY ANALYSIS SUMMARY:
 
-REGULATORY FINDINGS:
-{state.regulatory_findings}
+Financial:
+{state.financial_findings[-1] if state.financial_findings else "Unavailable"}
 
-RISK FINDINGS:
-{state.risks}
-
-VALUATION:
+Valuation:
 {state.valuation}
 
-INTEGRATION FINDINGS:
-{state.integration_findings}
+Risk:
+{state.risks[-1] if state.risks else "Unavailable"}
 
-STAKEHOLDER FINDINGS:
-{state.stakeholder_findings}
+Regulatory:
+{state.regulatory_findings[-1] if state.regulatory_findings else "Unavailable"}
 
-EVIDENCE:
-{state.evidence}
+Synergy:
+{state.synergies[-1] if state.synergies else "Unavailable"}
+
+Integration:
+{state.integration_findings[-1] if state.integration_findings else "Unavailable"}
+
+Evidence Count:
+{len(state.evidence)}
 
 
 CRITIC EVALUATION CRITERIA:
@@ -92,15 +91,19 @@ CRITIC EVALUATION CRITERIA:
 
 8. Are stakeholder impacts considered where available?
 
-9. Are the evidence IDs consistent with the available
+9. Are the identified strategic synergies appropriately
+   reflected in the recommendation, and are potential
+   synergies distinguished from guaranteed benefits?
+
+10. Are the evidence IDs consistent with the available
    evidence?
 
-10. Is the confidence level justified by the quality
+11. Is the confidence level justified by the quality
     and completeness of the evidence?
 
-11. Identify important contradictions.
+12. Identify important contradictions.
 
-12. Identify important missing analysis.
+13. Identify important missing analysis.
 
 
 APPROVAL RULE:
@@ -174,5 +177,6 @@ Never use null.
     print(">>> CRITIC LLM CALL COMPLETED")
 
     return {
-        "critic_feedback": [feedback]
+        "critic_feedback": [feedback],
+        "revision_count": state.revision_count + 1
     }

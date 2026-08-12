@@ -127,6 +127,17 @@ def test_market_graph():
         print(finding)
 
     assert result["stakeholder_findings"]
+    
+     # ==================================================
+    # Synergy
+    # ==================================================
+
+    print("\nSYNERGY FINDINGS\n")
+
+    for finding in result["synergies"]:
+        print(finding)
+
+    assert result["synergies"]
 
     # ==================================================
     # Final Recommendation
@@ -134,13 +145,10 @@ def test_market_graph():
 
     print("\nFINAL RECOMMENDATION\n")
 
-    final_recommendation = result.get(
-        "final_recommendation"
+    committee_decision = result.get(
+        "committee_decision"
     )
-
-    print(final_recommendation)
-
-    assert final_recommendation
+    assert committee_decision
 
     # ==================================================
     # Critic
@@ -177,7 +185,7 @@ def test_market_graph():
 
     print(
         "\nFull M&A graph with "
-        "Decision + Critic passed!"
+        "Synergy + Committee + Critic passed!"
     )
 
 

@@ -12,9 +12,10 @@ from models.risk import RiskFinding
 from models.valuation import ValuationFinding
 from models.integration import IntegrationFinding
 from models.stakeholder import StakeholderFinding
-from models.recommendation import FinalRecommendation
+from models.synergy import SynergyFinding
+from models.committee import CommitteeDecision
 from models.critic import CriticFeedback
-
+# from models.recommendation import FinalRecommendation
 
 class AcquisitionState(BaseModel):
 
@@ -77,9 +78,10 @@ class AcquisitionState(BaseModel):
     # CROSS-FUNCTIONAL ANALYSIS
     # ==========================================
 
-    synergies: list[Any] = Field(
-        default_factory=list
-    )
+    synergies: Annotated[
+        list[SynergyFinding],
+        add
+    ] = Field(default_factory=list)
 
     risks: Annotated[
         list[RiskFinding],
@@ -116,4 +118,6 @@ class AcquisitionState(BaseModel):
     # FINAL DECISION
     # ==========================================
 
-    final_recommendation: FinalRecommendation | None = None
+    # final_recommendation: FinalRecommendation | None = None
+
+    committee_decision: CommitteeDecision | None = None

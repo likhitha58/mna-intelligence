@@ -29,6 +29,7 @@ def decision_node(state: AcquisitionState):
         "valuation": state.valuation,
         "integration_findings": state.integration_findings,
         "stakeholder_findings": state.stakeholder_findings,
+        "synergies": state.synergies,
     }
 
     # --------------------------------------------------

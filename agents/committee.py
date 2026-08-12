@@ -115,6 +115,6 @@ Instructions:
 
     decision = structured_llm.invoke(prompt)
 
-    state.final_recommendation = decision
+    state.committee_decision = decision
 
     return state

@@ -10,9 +10,10 @@ from agents.risk import risk_node
 from agents.valuation import valuation_node
 from agents.integration import integration_node
 from agents.stakeholder import stakeholder_node
-from agents.decision import decision_node
+# from agents.decision import decision_node
 from agents.critic import critic_node
-
+from agents.synergy import synergy_node
+from agents.committee import committee_node
 from state.schemas import AcquisitionState
 
 
@@ -100,13 +101,14 @@ def build_graph():
     )
 
     graph.add_node(
-        "decision",
-        decision_node
-    )
-
-    graph.add_node(
         "critic",
         critic_node
+    )
+    graph.add_node("synergy", synergy_node)
+    
+    graph.add_node(
+    "committee",
+    committee_node
     )
 
     # ==========================================
@@ -211,6 +213,8 @@ def build_graph():
         "stakeholder",
         "aggregator"
     )
+    graph.add_edge("planner", "synergy")
+    graph.add_edge("synergy", "aggregator")
 
     # ==========================================
     # DECISION
@@ -218,15 +222,17 @@ def build_graph():
 
     graph.add_edge(
         "aggregator",
-        "decision"
+        "committee"
     )
 
     # ==========================================
     # CRITIC
     # ==========================================
 
+
+
     graph.add_edge(
-        "decision",
+        "committee",
         "critic"
     )
 
@@ -235,12 +241,12 @@ def build_graph():
     # ==========================================
 
     graph.add_conditional_edges(
-        "critic",
-        critic_router,
-        {
-            "revise": "decision",
-            "end": END,
-        }
+    "critic",
+    critic_router,
+    {
+        "revise": "committee",
+        "end": END,
+    }
     )
 
     return graph.compile()

@@ -22,7 +22,35 @@ def test_synergy_agent():
     for evidence in result["evidence"]:
         print(evidence)
 
+    # ------------------------------------------
+    # Basic validation
+    # ------------------------------------------
+
     assert result["synergies"]
+    assert len(result["synergies"]) == 1
+
+    # ------------------------------------------
+    # Validate synergy structure
+    # ------------------------------------------
+
+    finding = result["synergies"][0]
+
+    assert finding.synergy_area
+    assert finding.synergy_type
+    assert finding.summary
+    assert finding.potential_value
+    assert finding.integration_difficulty
+
+    # ------------------------------------------
+    # Validate evidence
+    # ------------------------------------------
+
+    assert result["evidence"]
+
+    # The synergy finding should reference evidence
+    assert finding.evidence_ids
+
+    print("\nSynergy Agent test passed!")
 
 
 if __name__ == "__main__":

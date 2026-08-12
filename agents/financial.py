@@ -14,10 +14,9 @@ def financial_node(state: AcquisitionState):
     evidence_items = []
     evidence_id = None
 
-    has_financial_data = any(
-        value is not None
-        for key, value in financial_data.items()
-        if key not in {"company_name", "ticker"}
+    has_financial_data = financial_data.get(
+    "data_available",
+    False
     )
 
     if has_financial_data:

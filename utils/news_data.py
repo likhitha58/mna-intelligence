@@ -1,26 +1,53 @@
 import yfinance as yf
 
 
-def get_company_news(ticker: str, limit: int = 10) -> list[dict]:
+def get_company_news(company: str, limit: int = 10) -> list[dict]:
 
-    company = yf.Ticker(ticker)
+    # --------------------------------------------------
+    # Known private companies
+    # --------------------------------------------------
 
-    news = company.news[:limit]
+    private_companies = {
+        "openai"
+    }
 
-    results = []
+    if company.lower() in private_companies:
 
-    for item in news:
+        return []
 
-        content = item.get("content", {})
 
-        results.append(
-            {
-                "title": content.get("title"),
-                "summary": content.get("summary"),
-                "publisher": content.get("provider", {}).get("displayName"),
-                "url": content.get("canonicalUrl", {}).get("url"),
-                "published": content.get("pubDate"),
-            }
-        )
+    # --------------------------------------------------
+    # Public company news lookup
+    # --------------------------------------------------
 
-    return results
+    try:
+
+        company_obj = yf.Ticker(company)
+
+        news = company_obj.news[:limit]
+
+        results = []
+
+        for item in news:
+
+            content = item.get("content", {})
+
+            results.append(
+                {
+                    "title": content.get("title"),
+                    "summary": content.get("summary"),
+                    "publisher": content.get(
+                        "provider", {}
+                    ).get("displayName"),
+                    "url": content.get(
+                        "canonicalUrl", {}
+                    ).get("url"),
+                    "published": content.get("pubDate"),
+                }
+            )
+
+        return results
+
+    except Exception:
+
+        return []
