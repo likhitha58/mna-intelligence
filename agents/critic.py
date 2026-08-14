@@ -178,5 +178,5 @@ Never use null.
 
     return {
         "critic_feedback": [feedback],
-        "revision_count": state.revision_count + 1
+        "revision_count": 1
     }

@@ -17,11 +17,51 @@ from agents.committee import committee_node
 from state.schemas import AcquisitionState
 
 
-def aggregator_node(state):
+def aggregator_node(state: AcquisitionState):
+
     print("\n>>> AGGREGATOR NODE STARTED")
+
+    evidence = []
+
+    for findings in [
+        state.financial_findings,
+        state.market_findings,
+        state.competitor_findings,
+        state.legal_findings,
+        state.regulatory_findings,
+        state.risks,
+        state.valuation if state.valuation else None,
+        state.integration_findings,
+        state.stakeholder_findings,
+        state.synergies,
+    ]:
+
+        if findings is None:
+            continue
+
+        if isinstance(findings, list):
+            for finding in findings:
+                if hasattr(finding, "evidence"):
+                    evidence.extend(finding.evidence)
+
+        else:
+            if hasattr(findings, "evidence"):
+                evidence.extend(findings.evidence)
+
+    # Remove duplicate evidence using evidence_id
+    unique_evidence = {}
+
+    for item in evidence:
+        unique_evidence[item.evidence_id] = item
+
+    evidence = list(unique_evidence.values())
+
+    print(f">>> UNIQUE EVIDENCE COUNT: {len(evidence)}")
     print(">>> AGGREGATOR NODE COMPLETED")
 
-    return {}
+    return {
+        "evidence": evidence
+    }
 
 
 def critic_router(state: AcquisitionState):
@@ -120,50 +160,16 @@ def build_graph():
         "planner"
     )
 
-    graph.add_edge(
-        "planner",
-        "financial"
-    )
-
-    graph.add_edge(
-        "planner",
-        "market"
-    )
-
-    graph.add_edge(
-        "planner",
-        "competitive"
-    )
-
-    graph.add_edge(
-        "planner",
-        "legal"
-    )
-
-    graph.add_edge(
-        "planner",
-        "regulatory"
-    )
-
-    graph.add_edge(
-        "planner",
-        "risk"
-    )
-
-    graph.add_edge(
-        "planner",
-        "valuation"
-    )
-
-    graph.add_edge(
-        "planner",
-        "integration"
-    )
-
-    graph.add_edge(
-        "planner",
-        "stakeholder"
-    )
+    graph.add_edge("planner", "financial")
+    graph.add_edge("planner", "market")
+    graph.add_edge("planner", "competitive")
+    graph.add_edge("planner", "legal")
+    graph.add_edge("planner", "regulatory")
+    graph.add_edge("planner", "risk")
+    graph.add_edge("planner", "valuation")
+    graph.add_edge("planner", "integration")
+    graph.add_edge("planner", "stakeholder")
+    graph.add_edge("planner", "synergy")
 
     # ==========================================
     # AGGREGATION
@@ -213,7 +219,6 @@ def build_graph():
         "stakeholder",
         "aggregator"
     )
-    graph.add_edge("planner", "synergy")
     graph.add_edge("synergy", "aggregator")
 
     # ==========================================

@@ -92,10 +92,10 @@ class AcquisitionState(BaseModel):
     # EVIDENCE
     # ==========================================
 
-    evidence: Annotated[
-        list[Evidence],
-        add
-    ] = Field(default_factory=list)
+
+    evidence: list[Evidence] = Field(
+        default_factory=list
+    )
 
     # ==========================================
     # VALUATION
@@ -112,7 +112,7 @@ class AcquisitionState(BaseModel):
         add
     ] = Field(default_factory=list)
 
-    revision_count: int = 0
+    revision_count: Annotated[int, add] = 0
 
     # ==========================================
     # FINAL DECISION

@@ -75,6 +75,5 @@ Rules:
         finding.evidence_ids = [evidence_id]
 
     return {
-        "financial_findings": [finding],
-        "evidence": evidence_items,
+        "financial_findings": [finding]
     }

@@ -120,6 +120,5 @@ it is based on illustrative assumptions.
     finding.evidence_ids = [evidence.evidence_id]
 
     return {
-        "valuation": finding,
-        "evidence": [evidence],
+        "valuation": finding
     }
