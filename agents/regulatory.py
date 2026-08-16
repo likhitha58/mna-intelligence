@@ -54,21 +54,44 @@ User Question:
 {state.user_question}
 
 Retrieved regulatory information:
-
 {regulatory_data}
 
-Analyze the available regulatory information.
+TASK:
+Produce exactly ONE regulatory finding using ONLY the information provided.
 
-Rules:
+RULES:
+- Do not invent regulations, laws, cases, jurisdictions, or regulatory actions.
+- Do not perform additional research.
+- Identify the most important regulatory risk.
+- Identify the relevant jurisdiction.
+- Explain how the regulatory issue could affect the acquisition.
+- Do not treat potential regulatory scrutiny as confirmed regulatory action.
+- If information is insufficient, explicitly state that.
+- risk_level must be exactly one of:
+  "low", "medium", or "high".
+- Keep the summary and impact concise.
+- evidence_ids must be an empty list because evidence IDs
+  are assigned by the application after the LLM response.
 
-1. Use only the information provided.
-2. Do not invent regulations, laws, cases, or regulatory actions.
-3. Identify the most important regulatory risk.
-4. Identify the relevant jurisdiction.
-5. Explain how the regulatory issue could affect the acquisition.
-6. Do not treat potential regulatory scrutiny as confirmed regulatory action.
-7. If information is insufficient, explicitly state that.
-8. Produce one important regulatory finding.
+IMPORTANT:
+Return a FLAT JSON object.
+
+DO NOT create:
+- a "properties" field
+- a "description" field
+- nested objects
+- any additional fields
+
+The response must contain EXACTLY these fields:
+
+{{
+    "regulation": "string",
+    "jurisdiction": "string",
+    "risk_level": "medium",
+    "summary": "string",
+    "impact": "string",
+    "evidence_ids": []
+}}
 """
 
     finding = structured_llm.invoke(prompt)

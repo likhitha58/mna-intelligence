@@ -23,40 +23,72 @@ def aggregator_node(state: AcquisitionState):
 
     evidence = []
 
-    for findings in [
-        state.financial_findings,
-        state.market_findings,
-        state.competitor_findings,
-        state.legal_findings,
-        state.regulatory_findings,
-        state.risks,
-        state.valuation if state.valuation else None,
-        state.integration_findings,
-        state.stakeholder_findings,
-        state.synergies,
-    ]:
+    all_findings = [
+        ("financial", state.financial_findings),
+        ("market", state.market_findings),
+        ("competitive", state.competitor_findings),
+        ("legal", state.legal_findings),
+        ("regulatory", state.regulatory_findings),
+        ("risk", state.risks),
+        ("valuation", [state.valuation] if state.valuation else []),
+        ("integration", state.integration_findings),
+        ("stakeholder", state.stakeholder_findings),
+        ("synergy", state.synergies),
+    ]
 
-        if findings is None:
-            continue
+    for agent_name, findings in all_findings:
 
-        if isinstance(findings, list):
-            for finding in findings:
-                if hasattr(finding, "evidence"):
-                    evidence.extend(finding.evidence)
+        print(
+            f"\n>>> {agent_name.upper()} FINDINGS: "
+            f"{len(findings)}"
+        )
 
-        else:
-            if hasattr(findings, "evidence"):
-                evidence.extend(findings.evidence)
+        for finding in findings:
 
-    # Remove duplicate evidence using evidence_id
+            print(
+                f">>> {agent_name.upper()} FINDING TYPE: "
+                f"{type(finding).__name__}"
+            )
+
+            if hasattr(finding, "evidence"):
+
+                print(
+                    f">>> {agent_name.upper()} EVIDENCE COUNT: "
+                    f"{len(finding.evidence)}"
+                )
+
+                evidence.extend(finding.evidence)
+
+            else:
+
+                print(
+                    f">>> {agent_name.upper()} HAS NO EVIDENCE FIELD"
+                )
+
+    # ==========================================
+    # REMOVE DUPLICATES
+    # ==========================================
+
     unique_evidence = {}
 
     for item in evidence:
-        unique_evidence[item.evidence_id] = item
+
+        if hasattr(item, "evidence_id"):
+
+            unique_evidence[item.evidence_id] = item
 
     evidence = list(unique_evidence.values())
 
-    print(f">>> UNIQUE EVIDENCE COUNT: {len(evidence)}")
+    print(
+        f"\n>>> TOTAL EVIDENCE BEFORE DEDUPLICATION: "
+        f"{len(evidence)}"
+    )
+
+    print(
+        f">>> UNIQUE EVIDENCE COUNT: "
+        f"{len(evidence)}"
+    )
+
     print(">>> AGGREGATOR NODE COMPLETED")
 
     return {

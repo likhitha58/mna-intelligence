@@ -54,23 +54,43 @@ User Question:
 {state.user_question}
 
 Available legal information:
-
 {legal_information}
 
-Analyze the available legal information.
+TASK:
+Produce exactly ONE legal finding using ONLY the information provided.
 
-Rules:
+RULES:
+- Do not invent legal facts.
+- Do not perform additional research.
+- Identify the most important legal issue.
+- Explain why the issue matters.
+- severity must be exactly one of:
+  "low", "medium", or "high".
+- Explain how the issue could affect the acquisition.
+- Do not treat potential disputes as confirmed legal judgments.
+- If information is unavailable, explicitly state that.
+- Keep the summary and impact concise.
+- evidence_ids must be an empty list because evidence IDs
+  are assigned by the application after the LLM response.
 
-1. Use only the information provided.
-2. Do not invent legal facts.
-3. Identify the most important legal issue.
-4. Explain why the issue matters.
-5. Assess its severity as low, medium, or high.
-6. Explain how it could affect the acquisition.
-7. Do not treat potential disputes as confirmed
-   legal judgments.
-8. If information is unavailable, explicitly state that.
-9. Produce one important legal finding.
+IMPORTANT:
+Return a FLAT JSON object.
+
+DO NOT create:
+- a "properties" field
+- a "description" field
+- nested objects
+- any additional fields
+
+The response must contain EXACTLY these fields:
+
+{{
+    "issue": "string",
+    "severity": "medium",
+    "summary": "string",
+    "impact": "string",
+    "evidence_ids": []
+}}
 """
 
     finding = structured_llm.invoke(prompt)

@@ -49,21 +49,40 @@ User Question:
 {state.user_question}
 
 Recent news about the target:
-
 {news}
 
-Analyze the available market and news information.
+TASK:
+Produce exactly ONE market/news finding using ONLY the information provided.
 
-Rules:
+RULES:
+- Do not invent news, events, companies, dates, or facts.
+- Do not perform additional research.
+- Do not treat rumors as confirmed facts.
+- If useful news is unavailable, explicitly state that.
+- Keep the summary and impact concise.
+- sentiment must be exactly one of:
+  "positive", "negative", or "neutral".
+- evidence_ids must be an empty list because evidence IDs
+  are assigned by the application after the LLM response.
 
-1. Use only the information provided.
-2. Do not invent news or events.
-3. Identify the most important market development.
-4. Explain how it could affect the acquisition.
-5. Consider whether the signal is positive, negative, or neutral.
-6. Do not treat rumors as confirmed facts.
-7. If no useful news is available, explicitly state that.
-8. Produce one important market finding.
+IMPORTANT:
+Return a FLAT JSON object.
+
+DO NOT create:
+- a "properties" field
+- a "description" field
+- nested objects
+- any additional fields
+
+The response must contain EXACTLY these fields:
+
+{{
+    "topic": "string",
+    "summary": "string",
+    "impact": "string",
+    "sentiment": "positive",
+    "evidence_ids": []
+}}
 """
 
     finding = structured_llm.invoke(prompt)

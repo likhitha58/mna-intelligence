@@ -15,8 +15,8 @@ def financial_node(state: AcquisitionState):
     evidence_id = None
 
     has_financial_data = financial_data.get(
-    "data_available",
-    False
+        "data_available",
+        False
     )
 
     if has_financial_data:
@@ -54,19 +54,39 @@ Target Company:
 User Question:
 {state.user_question}
 
-Retrieved financial data for the target company:
-
+Retrieved financial data:
 {financial_data}
 
-Analyze the available financial information.
+TASK:
+Produce exactly ONE financial finding using ONLY the retrieved data.
 
-Rules:
+RULES:
+- Do not invent financial values.
+- If financial information is unavailable, explicitly say "Unavailable".
+- Do not perform additional research.
+- Do not make assumptions about missing data.
+- Keep the interpretation concise.
+- evidence_ids must be an empty list because evidence IDs are assigned
+  by the application after the LLM response.
 
-1. Use only the financial information provided.
-2. Do not invent missing values.
-3. If a value is missing, acknowledge that it is unavailable.
-4. Explain what the financial metric means for the acquisition.
-5. Produce one important financial finding.
+IMPORTANT:
+Return a FLAT JSON object.
+
+DO NOT create:
+- a "properties" field
+- a "description" field
+- nested objects
+- any additional fields
+
+The response must contain EXACTLY these fields:
+
+{{
+    "metric": "string",
+    "value": "string",
+    "period": "string",
+    "interpretation": "string",
+    "evidence_ids": []
+}}
 """
 
     finding = structured_llm.invoke(prompt)

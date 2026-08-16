@@ -54,23 +54,43 @@ User Question:
 {state.user_question}
 
 Known competitors of the target:
-
 {competitors}
 
-Analyze the competitive position of the target.
+TASK:
+Produce exactly ONE competitive finding using ONLY the competitors provided.
 
-Rules:
+RULES:
+- Do not invent competitors or facts.
+- Do not perform additional research.
+- Identify the most important competitive threat.
+- Explain why the competitor matters.
+- Explain how the competitive situation could affect the acquisition.
+- threat_level must be exactly one of:
+  "low", "medium", or "high".
+- If no competitors are available, explicitly state that
+  information is unavailable.
+- Keep the summary and impact concise.
+- evidence_ids must be an empty list because evidence IDs
+  are assigned by the application after the LLM response.
 
-1. Use only the competitors provided.
-2. Do not invent competitors.
-3. Identify the most important competitive threat.
-4. Explain why the competitor matters.
-5. Explain how the competitive situation could
-   affect the acquisition.
-6. Assign a threat level of low, medium, or high.
-7. If no competitors are available, explicitly
-   state that information is unavailable.
-8. Produce one important competitive finding.
+IMPORTANT:
+Return a FLAT JSON object.
+
+DO NOT create:
+- a "properties" field
+- a "description" field
+- nested objects
+- any additional fields
+
+The response must contain EXACTLY these fields:
+
+{{
+    "competitor": "string",
+    "threat_level": "medium",
+    "summary": "string",
+    "impact": "string",
+    "evidence_ids": []
+}}
 """
 
     finding = structured_llm.invoke(prompt)
