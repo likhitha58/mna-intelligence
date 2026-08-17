@@ -95,5 +95,6 @@ The response must contain EXACTLY these fields:
         finding.evidence_ids = [evidence_id]
 
     return {
-        "financial_findings": [finding]
+        "financial_findings": [finding],
+        "evidence": evidence_items
     }

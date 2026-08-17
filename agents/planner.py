@@ -1,6 +1,5 @@
-from models.planner import ResearchPlan
+from models.planner import ResearchPlan, ResearchTask
 from state.schemas import AcquisitionState
-from utils.llm import get_llm
 
 
 def create_research_plan(
@@ -9,45 +8,90 @@ def create_research_plan(
     user_question: str
 ) -> ResearchPlan:
 
-    llm = get_llm()
+    tasks = [
 
-    structured_llm = llm.with_structured_output(ResearchPlan)
+        ResearchTask(
+            agent="Financial",
+            objective=(
+                f"Assess the available financial information "
+                f"for {company_b}."
+            )
+        ),
 
-    prompt = f"""
-You are the Research Planner for an M&A due diligence system.
+        ResearchTask(
+            agent="Market",
+            objective=(
+                f"Assess relevant market and news conditions "
+                f"affecting {company_b}."
+            )
+        ),
 
-The system is evaluating a potential acquisition.
+        ResearchTask(
+            agent="Competitive",
+            objective=(
+                f"Identify major competitors and competitive "
+                f"threats facing {company_b}."
+            )
+        ),
 
-Acquiring Company:
-{company_a}
+        ResearchTask(
+            agent="Legal",
+            objective=(
+                f"Identify major legal and intellectual-property "
+                f"risks associated with {company_b}."
+            )
+        ),
 
-Target Company:
-{company_b}
+        ResearchTask(
+            agent="Regulatory",
+            objective=(
+                f"Assess major regulatory and antitrust risks "
+                f"for the potential acquisition."
+            )
+        ),
 
-User Question:
-{user_question}
+        ResearchTask(
+            agent="Risk",
+            objective=(
+                f"Identify the most important acquisition risks "
+                f"associated with {company_b}."
+            )
+        ),
 
-Your task is to decompose the user's question into the research
-tasks required for a comprehensive M&A investigation.
+        ResearchTask(
+            agent="Valuation",
+            objective=(
+                f"Assess the available valuation information "
+                f"and key valuation assumptions for {company_b}."
+            )
+        ),
 
-Consider relevant areas such as:
+        ResearchTask(
+            agent="Integration",
+            objective=(
+                f"Assess the major technology, organizational, "
+                f"and operational integration requirements."
+            )
+        ),
 
-- Financial performance
-- Market conditions
-- Competitive landscape
-- Legal and contractual issues
-- Regulatory concerns
-- Acquisition synergies
-- Risks
-- Valuation
+        ResearchTask(
+            agent="Stakeholder",
+            objective=(
+                f"Assess the most important stakeholder "
+                f"implications of the acquisition."
+            )
+        ),
 
-Create specific and actionable research tasks.
+        ResearchTask(
+            agent="Synergy",
+            objective=(
+                f"Identify the most important potential "
+                f"strategic synergies between {company_a} and {company_b}."
+            )
+        ),
+    ]
 
-Do not perform the analysis yourself.
-Only create the research plan.
-"""
-
-    return structured_llm.invoke(prompt)
+    return ResearchPlan(tasks=tasks)
 
 
 def planner_node(state: AcquisitionState) -> AcquisitionState:

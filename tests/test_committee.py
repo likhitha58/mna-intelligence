@@ -12,10 +12,12 @@ def test_committee_agent():
 
     result = committee_node(state)
 
-    print("\nFINAL RECOMMENDATION\n")
-    print(result.committee_decision)
+    decision = result["committee_decision"]
 
-    assert result.committee_decision is not None
+    print("\nFINAL RECOMMENDATION\n")
+    print(decision)
+
+    assert decision is not None
 
 
 if __name__ == "__main__":

@@ -93,9 +93,10 @@ class AcquisitionState(BaseModel):
     # ==========================================
 
 
-    evidence: list[Evidence] = Field(
-        default_factory=list
-    )
+    evidence: Annotated[
+    list[Evidence],
+    add
+    ] = Field(default_factory=list)
 
     # ==========================================
     # VALUATION

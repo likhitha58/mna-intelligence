@@ -56,21 +56,41 @@ User Question:
 {state.user_question}
 
 Potential synergy information:
-
 {synergy_data}
 
-Analyze the available information.
+TASK:
+Produce exactly ONE synergy finding using ONLY the information provided.
 
-Rules:
+RULES:
+- Do not invent financial values or guaranteed benefits.
+- Identify the most important potential synergy.
+- Explain why the combination could create additional value.
+- Clearly distinguish potential value from guaranteed value.
+- Assess the difficulty of realizing the synergy.
+- Do not assume successful integration.
+- Keep the summary concise.
+- evidence_ids must be an empty list because evidence IDs
+  are assigned by the application after the LLM response.
 
-1. Use only the information provided.
-2. Do not invent financial values or guaranteed benefits.
-3. Identify the most important potential synergy.
-4. Explain why the combination could create additional value.
-5. Distinguish potential value from guaranteed value.
-6. Assess the difficulty of realizing the synergy.
-7. Do not assume successful integration.
-8. Produce one important synergy finding.
+IMPORTANT:
+Return a FLAT JSON object.
+
+DO NOT create:
+- a "properties" field
+- a "description" field
+- nested objects
+- any additional fields
+
+The response must contain EXACTLY these fields:
+
+{{
+    "synergy_area": "string",
+    "synergy_type": "string",
+    "summary": "string",
+    "potential_value": "string",
+    "integration_difficulty": "string",
+    "evidence_ids": []
+}}
 """
 
     finding = structured_llm.invoke(prompt)
@@ -79,5 +99,6 @@ Rules:
         finding.evidence_ids = [evidence_id]
 
     return {
-        "synergies": [finding]
+        "synergies": [finding],
+        "evidence": evidence_items
     }

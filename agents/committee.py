@@ -5,116 +5,149 @@ from utils.llm import get_llm
 
 def committee_node(state: AcquisitionState) -> AcquisitionState:
 
-    llm = get_llm()
+    print("\n>>> COMMITTEE NODE STARTED")
+
+    llm = get_llm(max_tokens=1000)
 
     structured_llm = llm.with_structured_output(
         CommitteeDecision,
         method="json_schema"
     )
 
+    # ==========================================
+    # MOST RECENT SPECIALIST FINDINGS
+    # ==========================================
+
+    financial = (
+        state.financial_findings[-1]
+        if state.financial_findings
+        else "Unavailable"
+    )
+
+    market = (
+        state.market_findings[-1]
+        if state.market_findings
+        else "Unavailable"
+    )
+
+    competitive = (
+        state.competitor_findings[-1]
+        if state.competitor_findings
+        else "Unavailable"
+    )
+
+    legal = (
+        state.legal_findings[-1]
+        if state.legal_findings
+        else "Unavailable"
+    )
+
+    regulatory = (
+        state.regulatory_findings[-1]
+        if state.regulatory_findings
+        else "Unavailable"
+    )
+
+    risk = (
+        state.risks[-1]
+        if state.risks
+        else "Unavailable"
+    )
+
+    valuation = (
+        state.valuation
+        if state.valuation
+        else "Unavailable"
+    )
+
+    integration = (
+        state.integration_findings[-1]
+        if state.integration_findings
+        else "Unavailable"
+    )
+
+    stakeholder = (
+        state.stakeholder_findings[-1]
+        if state.stakeholder_findings
+        else "Unavailable"
+    )
+
+    synergy = (
+        state.synergies[-1]
+        if state.synergies
+        else "Unavailable"
+    )
+
+    # ==========================================
+    # COMPACT DECISION PROMPT
+    # ==========================================
+
     prompt = f"""
-You are the Investment Committee Agent in an M&A intelligence system.
+You are the Investment Committee Agent.
 
-Your responsibility is to make the final acquisition recommendation
-after reviewing the findings produced by multiple specialist agents.
+Acquirer: {state.company_a}
+Target: {state.company_b}
+Question: {state.user_question}
 
-Acquiring Company:
-{state.company_a}
+Review these findings:
 
-Target Company:
-{state.company_b}
+Financial:
+{financial}
 
-User Question:
-{state.user_question}
+Market:
+{market}
 
+Competitive:
+{competitive}
 
-FINANCIAL FINDINGS:
-{state.financial_findings}
+Legal:
+{legal}
 
+Regulatory:
+{regulatory}
 
-MARKET FINDINGS:
-{state.market_findings}
+Risk:
+{risk}
 
+Valuation:
+{valuation}
 
-COMPETITIVE FINDINGS:
-{state.competitor_findings}
+Integration:
+{integration}
 
+Stakeholder:
+{stakeholder}
 
-LEGAL FINDINGS:
-{state.legal_findings}
+Synergy:
+{synergy}
 
+Make one evidence-based acquisition recommendation.
 
-REGULATORY FINDINGS:
-{state.regulatory_findings}
-
-
-SYNERGY FINDINGS:
-{state.synergies}
-
-
-RISK FINDINGS:
-{state.risks}
-
-
-VALUATION:
-{state.valuation}
-
-
-INTEGRATION FINDINGS:
-{getattr(state, "integration_findings", [])}
-
-
-STAKEHOLDER FINDINGS:
-{getattr(state, "stakeholder_findings", [])}
-
-
-Instructions:
-
-1. Consider all available findings together.
-
-2. Do not invent facts, financial values, legal issues,
-   regulatory developments, or market information.
-
-3. Clearly distinguish between verified information,
-   illustrative assumptions, and unavailable information.
-
-4. Evaluate both strategic benefits and acquisition risks.
-
-5. Pay particular attention to:
-   - Financial attractiveness
-   - Strategic synergies
-   - Competitive threats
-   - Legal risks
-   - Regulatory risks
-   - Talent and operational risks
-   - Valuation reliability
-   - Integration difficulty
-   - Stakeholder impact
-
-6. The valuation may be based on illustrative assumptions.
-   Do not treat an illustrative valuation as verified financial data.
-
-7. Produce one overall acquisition recommendation.
-
-8. The recommendation should be one of:
-   - Proceed
-   - Proceed with Caution
-   - Do Not Proceed
-
-9. If major risks exist but the strategic opportunity remains
-   attractive, prefer "Proceed with Caution" rather than automatically
-   recommending "Do Not Proceed".
-
-10. Provide practical conditions that should be satisfied before
-    Microsoft proceeds with the acquisition.
-
-11. Keep the recommendation evidence-based and balanced.
-
-12. Return exactly one structured CommitteeDecision.
+Rules:
+- Use only the supplied findings.
+- Do not invent facts.
+- Treat unavailable data as unavailable.
+- Treat the DCF valuation as illustrative.
+- Consider both opportunities and risks.
+- recommendation must be exactly:
+  Proceed
+  Proceed with Caution
+  Do Not Proceed
+- confidence must be exactly:
+  Low
+  Medium
+  High
+- Each list must contain at most 2 concise items.
+- Keep all text fields concise.
+- Return exactly one CommitteeDecision.
 """
+
+    print(">>> COMMITTEE LLM CALL STARTING")
 
     decision = structured_llm.invoke(prompt)
 
-    state.committee_decision = decision
+    print(">>> COMMITTEE LLM CALL COMPLETED")
 
-    return state
+    return {
+        "committee_decision": decision
+    }

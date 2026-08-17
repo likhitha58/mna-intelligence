@@ -33,7 +33,7 @@ def regulatory_node(state: AcquisitionState) -> AcquisitionState:
     else:
         evidence_id = None
 
-    llm = get_llm()
+    llm = get_llm(max_tokens=900)
 
     structured_llm = llm.with_structured_output(
         RegulatoryFinding,
@@ -41,64 +41,36 @@ def regulatory_node(state: AcquisitionState) -> AcquisitionState:
     )
 
     prompt = f"""
-You are the Regulatory and Compliance Agent
-in an M&A intelligence system.
+You are an M&A regulatory analyst.
 
-Acquiring Company:
-{state.company_a}
+Acquirer: {state.company_a}
+Target: {state.company_b}
 
-Target Company:
-{state.company_b}
-
-User Question:
-{state.user_question}
-
-Retrieved regulatory information:
+Regulatory data:
 {regulatory_data}
 
-TASK:
-Produce exactly ONE regulatory finding using ONLY the information provided.
+Create ONE concise regulatory finding.
 
-RULES:
-- Do not invent regulations, laws, cases, jurisdictions, or regulatory actions.
-- Do not perform additional research.
-- Identify the most important regulatory risk.
-- Identify the relevant jurisdiction.
-- Explain how the regulatory issue could affect the acquisition.
-- Do not treat potential regulatory scrutiny as confirmed regulatory action.
-- If information is insufficient, explicitly state that.
-- risk_level must be exactly one of:
-  "low", "medium", or "high".
-- Keep the summary and impact concise.
-- evidence_ids must be an empty list because evidence IDs
-  are assigned by the application after the LLM response.
+Use ONLY the provided regulatory data.
+Do not invent facts, laws, cases, or regulatory actions.
 
-IMPORTANT:
-Return a FLAT JSON object.
+Rules:
+- regulation: name the main regulatory issue
+- jurisdiction: use a jurisdiction present in the data
+- risk_level: exactly Low, Medium, or High
+- summary: one concise sentence
+- impact: one concise sentence
+- evidence_ids: []
 
-DO NOT create:
-- a "properties" field
-- a "description" field
-- nested objects
-- any additional fields
-
-The response must contain EXACTLY these fields:
-
-{{
-    "regulation": "string",
-    "jurisdiction": "string",
-    "risk_level": "medium",
-    "summary": "string",
-    "impact": "string",
-    "evidence_ids": []
-}}
+Return ONLY the structured RegulatoryFinding.
+Do not provide explanations outside the structured output.
 """
-
     finding = structured_llm.invoke(prompt)
 
     if evidence_id:
         finding.evidence_ids = [evidence_id]
 
     return {
-        "regulatory_findings": [finding]
+        "regulatory_findings": [finding],
+        "evidence": evidence_items
     }

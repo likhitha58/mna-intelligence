@@ -64,7 +64,7 @@ def valuation_node(state: AcquisitionState):
     # LLM interpretation
     # --------------------------------------------------
 
-    llm = get_llm()
+    llm = get_llm(max_tokens=400)
 
     structured_llm = llm.with_structured_output(
         ValuationFinding,
@@ -72,53 +72,37 @@ def valuation_node(state: AcquisitionState):
     )
 
     prompt = f"""
-You are the Valuation Analyst Agent
-in an M&A intelligence system.
+Return one JSON object for the ValuationFinding schema.
 
-Acquiring Company:
-{state.company_a}
+Target: {state.company_b}
 
-Target Company:
-{state.company_b}
+DCF enterprise value: {dcf_result["enterprise_value"]}
 
-User Question:
-{state.user_question}
+Key assumptions:
+Revenue={assumptions["revenue"]}
+Growth={assumptions["growth_rate"]}
+Margin={assumptions["operating_margin"]}
+Discount rate={assumptions["discount_rate"]}
+Terminal growth={assumptions["terminal_growth_rate"]}
 
-IMPORTANT:
+The valuation is illustrative and not based on verified financial statements.
 
-The target company may be privately held.
+Return ONLY valid JSON with exactly these fields:
 
-The valuation inputs below are ILLUSTRATIVE assumptions,
-not verified financial statements.
-
-DCF calculation:
-
-{dcf_result}
-
-Assumptions:
-
-{assumptions}
-
-Analyze the valuation output.
-
-Rules:
-
-1. Do not present the assumptions as verified company facts.
-2. Clearly state that the valuation is illustrative.
-3. Do not invent additional financial data.
-4. Explain what the DCF result means for the acquisition.
-5. Discuss the limitations of the valuation.
-6. Assign an appropriate confidence level.
-7. Produce one important valuation finding.
-
-The estimated value should clearly indicate that
-it is based on illustrative assumptions.
+{{
+  "method": "DCF",
+  "estimated_value": "illustrative enterprise value",
+  "assumptions": ["key assumption 1", "key assumption 2"],
+  "interpretation": "brief interpretation and limitation",
+  "confidence": "low",
+  "evidence_ids": []
+}}
 """
-
     finding = structured_llm.invoke(prompt)
 
     finding.evidence_ids = [evidence.evidence_id]
 
     return {
-        "valuation": finding
+        "valuation": finding,
+        "evidence": [evidence]
     }

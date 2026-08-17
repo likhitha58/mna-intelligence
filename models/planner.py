@@ -2,8 +2,9 @@ from pydantic import BaseModel, Field
 
 
 class ResearchTask(BaseModel):
+
     agent: str = Field(
-        description="The specialized agent responsible for this task."
+        description="Specialized M&A agent responsible for the task."
     )
 
     objective: str = Field(
@@ -12,6 +13,7 @@ class ResearchTask(BaseModel):
 
 
 class ResearchPlan(BaseModel):
+
     tasks: list[ResearchTask] = Field(
         description="List of research tasks required for the acquisition analysis."
     )

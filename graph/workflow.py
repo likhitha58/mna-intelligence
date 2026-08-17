@@ -10,91 +10,92 @@ from agents.risk import risk_node
 from agents.valuation import valuation_node
 from agents.integration import integration_node
 from agents.stakeholder import stakeholder_node
-# from agents.decision import decision_node
 from agents.critic import critic_node
 from agents.synergy import synergy_node
 from agents.committee import committee_node
 from state.schemas import AcquisitionState
 
 
+# ==========================================
+# AGGREGATOR NODE
+# ==========================================
+
 def aggregator_node(state: AcquisitionState):
 
     print("\n>>> AGGREGATOR NODE STARTED")
 
-    evidence = []
-
-    all_findings = [
-        ("financial", state.financial_findings),
-        ("market", state.market_findings),
-        ("competitive", state.competitor_findings),
-        ("legal", state.legal_findings),
-        ("regulatory", state.regulatory_findings),
-        ("risk", state.risks),
-        ("valuation", [state.valuation] if state.valuation else []),
-        ("integration", state.integration_findings),
-        ("stakeholder", state.stakeholder_findings),
-        ("synergy", state.synergies),
-    ]
-
-    for agent_name, findings in all_findings:
-
-        print(
-            f"\n>>> {agent_name.upper()} FINDINGS: "
-            f"{len(findings)}"
-        )
-
-        for finding in findings:
-
-            print(
-                f">>> {agent_name.upper()} FINDING TYPE: "
-                f"{type(finding).__name__}"
-            )
-
-            if hasattr(finding, "evidence"):
-
-                print(
-                    f">>> {agent_name.upper()} EVIDENCE COUNT: "
-                    f"{len(finding.evidence)}"
-                )
-
-                evidence.extend(finding.evidence)
-
-            else:
-
-                print(
-                    f">>> {agent_name.upper()} HAS NO EVIDENCE FIELD"
-                )
-
-    # ==========================================
-    # REMOVE DUPLICATES
-    # ==========================================
-
-    unique_evidence = {}
-
-    for item in evidence:
-
-        if hasattr(item, "evidence_id"):
-
-            unique_evidence[item.evidence_id] = item
-
-    evidence = list(unique_evidence.values())
-
     print(
-        f"\n>>> TOTAL EVIDENCE BEFORE DEDUPLICATION: "
-        f"{len(evidence)}"
+        f">>> Evidence collected: "
+        f"{len(state.evidence)}"
     )
 
     print(
-        f">>> UNIQUE EVIDENCE COUNT: "
-        f"{len(evidence)}"
+        f">>> Financial findings: "
+        f"{len(state.financial_findings)}"
+    )
+
+    print(
+        f">>> Market findings: "
+        f"{len(state.market_findings)}"
+    )
+
+    print(
+        f">>> Competitive findings: "
+        f"{len(state.competitor_findings)}"
+    )
+
+    print(
+        f">>> Legal findings: "
+        f"{len(state.legal_findings)}"
+    )
+
+    print(
+        f">>> Regulatory findings: "
+        f"{len(state.regulatory_findings)}"
+    )
+
+    print(
+        f">>> Risk findings: "
+        f"{len(state.risks)}"
+    )
+
+    print(
+        f">>> Integration findings: "
+        f"{len(state.integration_findings)}"
+    )
+
+    print(
+        f">>> Stakeholder findings: "
+        f"{len(state.stakeholder_findings)}"
+    )
+
+    print(
+        f">>> Synergy findings: "
+        f"{len(state.synergies)}"
+    )
+
+    print(
+        f">>> Valuation available: "
+        f"{state.valuation is not None}"
     )
 
     print(">>> AGGREGATOR NODE COMPLETED")
 
-    return {
-        "evidence": evidence
-    }
+    # The specialist agents now write their evidence
+    # directly into state.evidence.
+    #
+    # Therefore, the aggregator acts only as a
+    # synchronization/checkpoint node.
+    #
+    # Returning an empty dictionary means that the
+    # aggregator does not modify any state fields.
 
+    return {}
+
+
+# ==========================================
+# CRITIC ROUTER
+# ==========================================
 
 def critic_router(state: AcquisitionState):
 
@@ -108,6 +109,10 @@ def critic_router(state: AcquisitionState):
 
     return "revise"
 
+
+# ==========================================
+# BUILD GRAPH
+# ==========================================
 
 def build_graph():
 
@@ -168,19 +173,23 @@ def build_graph():
     )
 
     graph.add_node(
+        "synergy",
+        synergy_node
+    )
+
+    graph.add_node(
         "aggregator",
         aggregator_node
     )
 
     graph.add_node(
+        "committee",
+        committee_node
+    )
+
+    graph.add_node(
         "critic",
         critic_node
-    )
-    graph.add_node("synergy", synergy_node)
-    
-    graph.add_node(
-    "committee",
-    committee_node
     )
 
     # ==========================================
@@ -192,19 +201,58 @@ def build_graph():
         "planner"
     )
 
-    graph.add_edge("planner", "financial")
-    graph.add_edge("planner", "market")
-    graph.add_edge("planner", "competitive")
-    graph.add_edge("planner", "legal")
-    graph.add_edge("planner", "regulatory")
-    graph.add_edge("planner", "risk")
-    graph.add_edge("planner", "valuation")
-    graph.add_edge("planner", "integration")
-    graph.add_edge("planner", "stakeholder")
-    graph.add_edge("planner", "synergy")
+    graph.add_edge(
+        "planner",
+        "financial"
+    )
+
+    graph.add_edge(
+        "planner",
+        "market"
+    )
+
+    graph.add_edge(
+        "planner",
+        "competitive"
+    )
+
+    graph.add_edge(
+        "planner",
+        "legal"
+    )
+
+    graph.add_edge(
+        "planner",
+        "regulatory"
+    )
+
+    graph.add_edge(
+        "planner",
+        "risk"
+    )
+
+    graph.add_edge(
+        "planner",
+        "valuation"
+    )
+
+    graph.add_edge(
+        "planner",
+        "integration"
+    )
+
+    graph.add_edge(
+        "planner",
+        "stakeholder"
+    )
+
+    graph.add_edge(
+        "planner",
+        "synergy"
+    )
 
     # ==========================================
-    # AGGREGATION
+    # AGGREGATION / SYNCHRONIZATION
     # ==========================================
 
     graph.add_edge(
@@ -251,10 +299,14 @@ def build_graph():
         "stakeholder",
         "aggregator"
     )
-    graph.add_edge("synergy", "aggregator")
+
+    graph.add_edge(
+        "synergy",
+        "aggregator"
+    )
 
     # ==========================================
-    # DECISION
+    # COMMITTEE
     # ==========================================
 
     graph.add_edge(
@@ -266,8 +318,6 @@ def build_graph():
     # CRITIC
     # ==========================================
 
-
-
     graph.add_edge(
         "committee",
         "critic"
@@ -278,12 +328,12 @@ def build_graph():
     # ==========================================
 
     graph.add_conditional_edges(
-    "critic",
-    critic_router,
-    {
-        "revise": "committee",
-        "end": END,
-    }
+        "critic",
+        critic_router,
+        {
+            "revise": "committee",
+            "end": END,
+        }
     )
 
     return graph.compile()
